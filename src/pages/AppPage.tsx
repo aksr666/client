@@ -25,7 +25,7 @@ const AppPage: React.FC = () => {
                   </svg>
                 )}
                 <span className="text-sm text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                  {currentRoom.userCount || 0} users
+                  {currentRoom.participants?.length} users
                 </span>
               </div>
             </div>

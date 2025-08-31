@@ -19,7 +19,7 @@ export interface Room {
   name: string
   isPrivate: boolean
   hasPassword: boolean
-  userCount?: number
+  participants?: User[]
 }
 
 // Auth atom with localStorage persistence

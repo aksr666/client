@@ -3,7 +3,7 @@ import { useAtom } from 'jotai'
 import { io, Socket } from 'socket.io-client'
 import { socketAtom, authAtom, roomsAtom } from '../store'
 
-const SOCKET_URL = 'ws://localhost:3001'
+const SOCKET_URL = 'http://localhost:3001'
 
 export const useSocket = () => {
   const [socket, setSocket] = useAtom(socketAtom)
@@ -12,11 +12,11 @@ export const useSocket = () => {
   const socketRef = useRef<Socket | null>(null)
 
   useEffect(() => {
-    if (auth.token && !socket) {
+    if (auth.token && !socketRef.current) {
       const newSocket = io(SOCKET_URL, {
         auth: {
           token: auth.token
-        }
+        },
       })
 
       newSocket.on('connect', () => {
@@ -27,23 +27,23 @@ export const useSocket = () => {
         console.log('Disconnected from socket server')
       })
 
-      newSocket.on('rooms:list', (rooms) => {
+      newSocket.on('rooms_list', (rooms) => {
         setRooms(rooms)
       })
 
-      newSocket.on('room:created', (room) => {
+      newSocket.on('room_created', (room) => {
         setRooms((prev) => [...prev, room])
       })
 
-      newSocket.on('room:deleted', (roomId) => {
+      newSocket.on('room_deleted', (roomId) => {
         setRooms((prev) => prev.filter(room => room.id !== roomId))
       })
 
-      newSocket.on('user:joined', (data) => {
+      newSocket.on('user_joined', (data) => {
         console.log('User joined:', data)
       })
 
-      newSocket.on('user:left', (data) => {
+      newSocket.on('user_left', (data) => {
         console.log('User left:', data)
       })
 
@@ -58,7 +58,7 @@ export const useSocket = () => {
         setSocket(null)
       }
     }
-  }, [auth.token, socket, setSocket, setRooms])
+  }, [auth.token, setSocket, setRooms])
 
   return socket
 }
@@ -68,37 +68,39 @@ export const useSocketEvents = () => {
 
   const createRoom = (roomData: { name: string; password?: string; isPrivate: boolean }) => {
     if (socket) {
-      socket.emit('room:create', roomData)
+      console.log(roomData);
+      
+      socket.emit('create_room', roomData)
     }
   }
 
   const joinRoom = (roomId: string, password?: string) => {
     if (socket) {
-      socket.emit('room:join', { roomId, password })
+      socket.emit('join_room', { roomId, password })
     }
   }
 
   const leaveRoom = (roomId: string) => {
     if (socket) {
-      socket.emit('room:leave', { roomId })
+      socket.emit('leave_room', { roomId })
     }
   }
 
   const deleteRoom = (roomId: string) => {
     if (socket) {
-      socket.emit('room:delete', { roomId })
+      socket.emit('delete_room', { roomId })
     }
   }
 
   const moveCursor = (data: { x: number; y: number; roomId: string }) => {
     if (socket) {
-      socket.emit('cursor:move', data)
+      socket.emit('cursor_move', data)
     }
   }
 
   const leaveCursor = (roomId: string) => {
     if (socket) {
-      socket.emit('cursor:leave', { roomId })
+      socket.emit('cursor_leave', { roomId })
     }
   }
 

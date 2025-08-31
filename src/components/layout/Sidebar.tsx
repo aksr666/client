@@ -118,9 +118,9 @@ const Sidebar: React.FC = () => {
                     </svg>
                   )}
                 </div>
-                {room.userCount !== undefined && (
+                {room.participants?.length !== undefined && (
                   <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                    {room.userCount} users
+                    {room.participants.length} users
                   </span>
                 )}
               </div>
