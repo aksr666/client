@@ -6,7 +6,7 @@ import Button from './Button'
 interface JoinRoomModalProps {
   isOpen: boolean
   onClose: () => void
-  onJoin: (roomId: string, password?: string) => Promise<{ success: boolean; error?: string }>
+  onJoin: (roomId: string, password?: string) => void
   loading?: boolean
 }
 
@@ -31,19 +31,7 @@ const JoinRoomModal: React.FC<JoinRoomModalProps> = ({
       return
     }
 
-    try {
-      const result = await onJoin(formData.roomId.trim(), formData.password || undefined)
-      
-      if (result.success) {
-        onClose()
-        setFormData({ roomId: '', password: '' })
-        setError(null)
-      } else {
-        setError(result.error || 'Failed to join room')
-      }
-    } catch (err) {
-      setError('An unexpected error occurred')
-    }
+    onJoin(formData.roomId.trim(), formData.password || undefined)
   }
 
   const handleClose = () => {

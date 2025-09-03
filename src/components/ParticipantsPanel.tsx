@@ -1,14 +1,16 @@
 import React, { useState } from 'react'
-import { useAtom } from 'jotai'
-import { participantsAtom } from '../store'
+import { useAtom, useAtomValue } from 'jotai'
+import { roomsAtomFamily, currentRoomIdAtom } from '../store'
 
 const ParticipantsPanel: React.FC = () => {
-  const [participants] = useAtom(participantsAtom)
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const [currentRoomId] = useAtom(currentRoomIdAtom);
+  const currentRoom = useAtomValue(roomsAtomFamily(currentRoomId));
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
+  if (!currentRoom) return null;
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-      {/* Header */}
       <div 
         className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
         onClick={() => setIsCollapsed(!isCollapsed)}
@@ -19,7 +21,7 @@ const ParticipantsPanel: React.FC = () => {
           </svg>
           <h3 className="font-semibold text-gray-900">Participants</h3>
           <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2 py-1 rounded-full">
-            {participants.length}
+            {currentRoom?.participants?.length}
           </span>
         </div>
         <svg 
@@ -32,17 +34,15 @@ const ParticipantsPanel: React.FC = () => {
           <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
         </svg>
       </div>
-
-      {/* Participants List */}
       {!isCollapsed && (
         <div className="border-t border-gray-200 max-h-64 overflow-y-auto">
-          {participants.length === 0 ? (
+          {currentRoom?.participants?.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
               <p className="text-sm">No participants yet</p>
             </div>
           ) : (
             <div className="p-2">
-              {participants.map((participant) => (
+              {currentRoom?.participants?.map((participant) => (
                 <div
                   key={participant.id}
                   className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
@@ -50,7 +50,7 @@ const ParticipantsPanel: React.FC = () => {
                   <div 
                     className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
                     style={{
-                      backgroundColor: `hsl(${(parseInt(participant.id) * 137.5) % 360}, 70%, 60%)`
+                      backgroundColor: `hsl(${(participant.id * 137.5) % 360}, 70%, 60%)`
                     }}
                   >
                     {participant.firstName[0]}{participant.lastName[0]}

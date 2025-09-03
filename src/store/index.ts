@@ -1,9 +1,9 @@
-import { atom } from 'jotai'
-import { atomWithStorage } from 'jotai/utils'
+import { Atom, atom } from 'jotai'
+import { atomFamily, atomWithStorage } from 'jotai/utils'
 import { Socket } from 'socket.io-client'
 
 export interface User {
-  id: string
+  id: number
   email: string
   firstName: string
   lastName: string
@@ -28,20 +28,47 @@ export const authAtom = atomWithStorage<AuthState>('auth', {
   user: null
 })
 
-// Rooms atom
-export const roomsAtom = atom<Room[]>([])
-
 // Socket atom
 export const socketAtom = atom<Socket | null>(null)
 
-// Current room atom
-export const currentRoomAtom = atom<Room | null>(null)
+// rooms
+export const roomsAtom = atom<Room[]>([])
 
-// Participants atom
-export const participantsAtom = atom<User[]>([])
+export const roomsAtomFamily = atomFamily((roomId: string | null) => 
+  atom((get) => {
+    if (!roomId) return null
+    
+    const rooms = get(roomsAtom)
+    const room = rooms.find(room => room.id === roomId)
+    return room ?? null
+  })
+)
 
-// Cursors atom
-export const cursorsAtom = atom<Record<string, { x: number; y: number; user: User; lastSeen: number }>>({})
+export const currentRoomIdAtom = atom<string | null>(null)
+
 
 // Sidebar visibility atom
 export const sidebarVisibleAtom = atom<boolean>(true)
+
+// Cursors
+type CursorState = {
+  x: number
+  y: number
+  user: any
+}
+
+export const cursorAtom = atom<Record<string, CursorState>>({})
+export const cursorsAtomFamily = atomFamily(
+  (userId: number) =>
+    atom(
+      (get) => get(cursorAtom)[userId],
+      (get, set, update: Partial<CursorState>) => {
+        const prev = get(cursorAtom)
+
+        set(cursorAtom, {
+          ...prev,
+          [userId]: { ...prev[userId], ...update },
+        })
+      }
+    )
+);

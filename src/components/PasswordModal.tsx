@@ -6,7 +6,7 @@ import Button from './Button'
 interface PasswordModalProps {
   isOpen: boolean
   onClose: () => void
-  onJoin: (password: string) => Promise<{ success: boolean; error?: string }>
+  onJoin: (password: string) => void
   roomName: string
   loading?: boolean
 }
@@ -30,19 +30,7 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
       return
     }
 
-    try {
-      const result = await onJoin(password.trim())
-      
-      if (result.success) {
-        onClose()
-        setPassword('')
-        setError(null)
-      } else {
-        setError(result.error || 'Invalid password')
-      }
-    } catch (err) {
-      setError('An unexpected error occurred')
-    }
+    onJoin(password.trim())
   }
 
   const handleClose = () => {

@@ -1,33 +1,28 @@
-import React, { useState } from 'react'
-import { useAtom } from 'jotai'
-import { roomsAtom, currentRoomAtom } from '../../store'
-import { useSocketEvents } from '../../features/socket'
-import Button from '../Button'
-import Input from '../Input'
-import JoinRoomModal from '../JoinRoomModal'
-import PasswordModal from '../PasswordModal'
-import Toast from '../Toast'
+import React, { useState } from 'react';
+import { useAtom } from 'jotai';
+import { roomsAtom, currentRoomIdAtom } from '../../store';
+import { useSocketEvents } from '../../features/socket';
+import Button from '../Button';
+import Input from '../Input';
+import JoinRoomModal from '../JoinRoomModal';
 
 const Sidebar: React.FC = () => {
-  const [rooms] = useAtom(roomsAtom)
-  const [currentRoom] = useAtom(currentRoomAtom)
-  const { createRoom, joinRoom } = useSocketEvents()
-  
-  const [showCreateForm, setShowCreateForm] = useState(false)
-  const [showJoinModal, setShowJoinModal] = useState(false)
-  const [showPasswordModal, setShowPasswordModal] = useState(false)
-  const [selectedRoom, setSelectedRoom] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
-  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' | 'info' | 'warning' } | null>(null)
-  
+  const [rooms] = useAtom(roomsAtom);
+  const [, setCurrentRoomId] = useAtom(currentRoomIdAtom);
+  const { createRoom, joinRoom } = useSocketEvents();
+
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showJoinModal, setShowJoinModal] = useState(false);
+
   const [createFormData, setCreateFormData] = useState({
     name: '',
     password: '',
     isPrivate: false
-  })
+  });
 
   const handleCreateRoom = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
+
     if (createFormData.name.trim()) {
       createRoom({
         name: createFormData.name,
@@ -37,64 +32,12 @@ const Sidebar: React.FC = () => {
       setCreateFormData({ name: '', password: '', isPrivate: false })
       setShowCreateForm(false)
     }
-  }
-
-  const handleJoinRoom = async (roomId: string, password?: string) => {
-    setLoading(true)
-    try {
-      const result = await joinRoom(roomId, password)
-      if (result.success) {
-        setToast({ message: 'Successfully joined room!', type: 'success' })
-      } else {
-        return { success: false, error: result.error }
-      }
-    } catch (error) {
-      return { success: false, error: 'Failed to join room' }
-    } finally {
-      setLoading(false)
-    }
-    return { success: true }
-  }
+  };
 
   const handleRoomClick = (room: any) => {
-    // If room is private, show toast and don't allow joining by click
-    if (room.isPrivate) {
-      setToast({ 
-        message: 'This room is private. Use the Join Room button.', 
-        type: 'warning' 
-      })
-      return
-    }
-
-    // If room has password, show password modal
-    if (room.hasPassword) {
-      setSelectedRoom(room)
-      setShowPasswordModal(true)
-      return
-    }
-
-    // If room is public and has no password, join immediately
-    handleJoinRoom(room.id)
-  }
-
-  const handlePasswordJoin = async (password: string) => {
-    if (!selectedRoom) return { success: false, error: 'No room selected' }
-    
-    setLoading(true)
-    try {
-      const result = await joinRoom(selectedRoom.id, password)
-      if (result.success) {
-        setToast({ message: 'Successfully joined room!', type: 'success' })
-        return { success: true }
-      } else {
-        return { success: false, error: result.error }
-      }
-    } catch (error) {
-      return { success: false, error: 'Failed to join room' }
-    } finally {
-      setLoading(false)
-    }
-  }
+    setCurrentRoomId(room.id);
+    joinRoom(room.id);
+  };
 
   return (
     <>
@@ -102,15 +45,15 @@ const Sidebar: React.FC = () => {
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-lg font-semibold text-gray-900">Rooms</h2>
           <div className="flex space-x-2">
-            <Button 
+            <Button
               size="sm"
               variant="secondary"
               onClick={() => setShowJoinModal(true)}
             >
               Join Room
             </Button>
-            <Button 
-              size="sm" 
+            <Button
+              size="sm"
               onClick={() => setShowCreateForm(!showCreateForm)}
             >
               {showCreateForm ? 'Cancel' : 'Create Room'}
@@ -163,14 +106,8 @@ const Sidebar: React.FC = () => {
             rooms.map((room) => (
               <div
                 key={room.id}
-                className={`
-                  p-3 rounded-2xl cursor-pointer transition-all duration-200
-                  ${currentRoom?.id === room.id 
-                    ? 'bg-blue-100 border border-blue-200' 
-                    : 'bg-white hover:bg-gray-50 border border-gray-200'
-                  }
-                `}
-                onClick={() => handleRoomClick(room)}
+                className='p-3 rounded-2xl cursor-pointer transition-all duration-200 bg-white hover:bg-gray-50 border border-gray-200'
+                onClick={() => joinRoom(room.id)}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-2">
@@ -186,9 +123,9 @@ const Sidebar: React.FC = () => {
                       </svg>
                     )}
                   </div>
-                  {room.userCount !== undefined && (
+                  {room.participants?.length && (
                     <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                      {room.userCount} users
+                      {room.participants.length}
                     </span>
                   )}
                 </div>
@@ -197,36 +134,13 @@ const Sidebar: React.FC = () => {
           )}
         </div>
       </div>
-
-      {/* Modals */}
       <JoinRoomModal
         isOpen={showJoinModal}
         onClose={() => setShowJoinModal(false)}
-        onJoin={handleJoinRoom}
-        loading={loading}
+        onJoin={handleRoomClick}
       />
-
-      <PasswordModal
-        isOpen={showPasswordModal}
-        onClose={() => {
-          setShowPasswordModal(false)
-          setSelectedRoom(null)
-        }}
-        onJoin={handlePasswordJoin}
-        roomName={selectedRoom?.name || ''}
-        loading={loading}
-      />
-
-      {/* Toast */}
-      {toast && (
-        <Toast
-          message={toast.message}
-          type={toast.type}
-          onClose={() => setToast(null)}
-        />
-      )}
     </>
   )
-}
+};
 
-export default Sidebar
+export default Sidebar;

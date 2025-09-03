@@ -1,25 +1,23 @@
 import React from 'react'
-import { useAtom } from 'jotai'
-import { currentRoomAtom, participantsAtom } from '../store'
+import { useAtom, useAtomValue } from 'jotai'
+import { currentRoomIdAtom, roomsAtom, roomsAtomFamily } from '../store'
 import { useSocketEvents } from '../features/socket'
 import Button from './Button'
 import RoomCanvas from './RoomCanvas'
 import ParticipantsPanel from './ParticipantsPanel'
 
 const RoomView: React.FC = () => {
-  const [currentRoom] = useAtom(currentRoomAtom)
-  const [participants] = useAtom(participantsAtom)
+  const [currentRoomId] = useAtom(currentRoomIdAtom);
+  const currentRoom = useAtomValue(roomsAtomFamily(currentRoomId));
   const { leaveRoom } = useSocketEvents()
 
   const handleLeaveRoom = () => {
-    if (currentRoom) {
-      leaveRoom(currentRoom.id)
+    if (currentRoomId) {
+      leaveRoom(currentRoomId)
     }
   }
 
-  if (!currentRoom) {
-    return null
-  }
+  if (!currentRoom) return null;
 
   return (
     <div className="h-full flex flex-col">
@@ -30,7 +28,7 @@ const RoomView: React.FC = () => {
             <div>
               <h1 className="text-xl font-bold text-gray-900">{currentRoom.name}</h1>
               <p className="text-sm text-gray-600">
-                {currentRoom.isPrivate ? 'Private Room' : 'Public Room'}
+                {currentRoom?.isPrivate ? 'Private Room' : 'Public Room'}
               </p>
             </div>
             <div className="flex items-center space-x-2">
@@ -39,9 +37,6 @@ const RoomView: React.FC = () => {
                   <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
                 </svg>
               )}
-              <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
-                {participants.length} participants
-              </span>
             </div>
           </div>
           <Button
