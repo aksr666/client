@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 
 import { useSocketEvents } from '../../hooks/socket';
 import { currentRoomIdAtom, roomsAtom } from '../../store';
-import Button from '../Button';
-import Input from '../Input';
+import Button from '../ui/Button';
+import Input from '../ui/Input';
 import JoinRoomModal from '../JoinRoomModal';
 
 const Sidebar: React.FC = () => {

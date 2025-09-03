@@ -1,7 +1,7 @@
 import { useAtomValue } from 'jotai';
 import React, { useEffect, useRef, useState } from 'react';
 
-import { cursorsAtomFamily } from '../store';
+import { cursorsAtomFamily } from '../../store';
 
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
 

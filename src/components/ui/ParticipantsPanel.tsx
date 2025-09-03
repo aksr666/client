@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import React, { useState } from 'react';
 
-import { currentRoomIdAtom, roomsAtomFamily } from '../store';
+import { currentRoomIdAtom, roomsAtomFamily } from '../../store';
 
 const ParticipantsPanel: React.FC = () => {
   const [currentRoomId] = useAtom(currentRoomIdAtom);

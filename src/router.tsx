@@ -1,10 +1,9 @@
 import React, { Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 
-import Loader from './components/Loader';
+import Loader from './components/ui/Loader';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Lazy load pages for better performance
 const Home = React.lazy(() => import('./pages/Home'));
 const AppPage = React.lazy(() => import('./pages/AppPage'));
 

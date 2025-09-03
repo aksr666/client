@@ -3,7 +3,7 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 
 import { authAtom } from '../store';
-import Loader from './Loader';
+import Loader from './ui/Loader';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;

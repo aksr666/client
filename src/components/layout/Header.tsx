@@ -1,17 +1,16 @@
 import { useAtom } from 'jotai';
 import React from 'react';
 
-import { useAuth } from '../../features/auth';
-import { useSocket } from '../../features/socket';
+import { useAuth } from '../../hooks/auth';
+import { useSocket } from '../../hooks/socket';
 import { authAtom, socketAtom } from '../../store';
-import Button from '../Button';
+import Button from '../ui/Button';
 
 const Header: React.FC = () => {
   const [auth] = useAtom(authAtom);
   const [socket] = useAtom(socketAtom);
   const { logout } = useAuth();
 
-  // Initialize socket connection
   useSocket();
 
   const isConnected = socket?.connected;
@@ -21,8 +20,6 @@ const Header: React.FC = () => {
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
           <h1 className="text-2xl font-bold text-gray-900">Collaboration App</h1>
-
-          {/* Socket Connection Status */}
           <div className="flex items-center space-x-2">
             <div
               className={`w-2 h-2 rounded-full ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}

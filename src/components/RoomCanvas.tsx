@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useRef } from 'react';
 
 import { useSocketEvents } from '../hooks/socket';
 import { currentRoomIdAtom, roomsAtomFamily } from '../store';
-import { Cursor } from './Cursor';
+import { Cursor } from './ui/Cursor';
 
 const RoomCanvas: React.FC = () => {
   const [currentRoomId] = useAtom(currentRoomIdAtom);

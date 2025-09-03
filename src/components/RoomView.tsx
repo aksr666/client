@@ -3,8 +3,8 @@ import React from 'react';
 
 import { useSocketEvents } from '../hooks/socket';
 import { currentRoomIdAtom, roomsAtomFamily } from '../store';
-import Button from './Button';
-import ParticipantsPanel from './ParticipantsPanel';
+import Button from './ui/Button';
+import ParticipantsPanel from './ui/ParticipantsPanel';
 import RoomCanvas from './RoomCanvas';
 
 const RoomView: React.FC = () => {
