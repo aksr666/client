@@ -24,17 +24,19 @@ A real-time collaboration application built with React, TypeScript, and Socket.I
 
 ## Prerequisites
 
-- Node.js 16+ 
+- Node.js 16+
 - Backend server running on `http://localhost:3001`
 
 ## Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -46,11 +48,13 @@ npm run dev
 The app expects a backend server with the following endpoints:
 
 ### Authentication
+
 - `POST /auth/login` - Login with email/password
 - `POST /users/register` - Register new user
 - `GET /users/:id` - Get user info (protected)
 
 ### Socket.IO Events
+
 - **Server emits**: `rooms:list`, `room:created`, `room:deleted`, `user:joined`, `user:left`
 - **Client emits**: `room:create`, `room:join`, `room:leave`, `room:delete`
 - **Collaboration**: `cursor:move`, `cursor:leave`
@@ -80,6 +84,7 @@ src/
 ## Environment Variables
 
 No environment variables are required for the frontend. The backend URLs are hardcoded:
+
 - API: `http://localhost:3001`
 - Socket.IO: `ws://localhost:3001`
 

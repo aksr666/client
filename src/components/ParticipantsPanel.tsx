@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { useAtom, useAtomValue } from 'jotai'
-import { roomsAtomFamily, currentRoomIdAtom } from '../store'
+import { useAtom, useAtomValue } from 'jotai';
+import React, { useState } from 'react';
+
+import { currentRoomIdAtom, roomsAtomFamily } from '../store';
 
 const ParticipantsPanel: React.FC = () => {
   const [currentRoomId] = useAtom(currentRoomIdAtom);
@@ -11,9 +12,15 @@ const ParticipantsPanel: React.FC = () => {
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
-      <div 
+      <div
         className="flex items-center justify-between p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+        role="button"
+        tabIndex={0}
+        aria-expanded={!isCollapsed}
         onClick={() => setIsCollapsed(!isCollapsed)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') setIsCollapsed((v) => !v);
+        }}
       >
         <div className="flex items-center space-x-2">
           <svg className="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
@@ -24,14 +31,18 @@ const ParticipantsPanel: React.FC = () => {
             {currentRoom?.participants?.length}
           </span>
         </div>
-        <svg 
+        <svg
           className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
             isCollapsed ? 'rotate-180' : ''
-          }`} 
-          fill="currentColor" 
+          }`}
+          fill="currentColor"
           viewBox="0 0 20 20"
         >
-          <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+          <path
+            fillRule="evenodd"
+            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+            clipRule="evenodd"
+          />
         </svg>
       </div>
       {!isCollapsed && (
@@ -47,21 +58,20 @@ const ParticipantsPanel: React.FC = () => {
                   key={participant.id}
                   className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <div 
+                  <div
                     className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium"
                     style={{
-                      backgroundColor: `hsl(${(participant.id * 137.5) % 360}, 70%, 60%)`
+                      backgroundColor: `hsl(${(participant.id * 137.5) % 360}, 70%, 60%)`,
                     }}
                   >
-                    {participant.firstName[0]}{participant.lastName[0]}
+                    {participant.firstName[0]}
+                    {participant.lastName[0]}
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium text-gray-900 truncate">
                       {participant.firstName} {participant.lastName}
                     </p>
-                    <p className="text-xs text-gray-500 truncate">
-                      {participant.email}
-                    </p>
+                    <p className="text-xs text-gray-500 truncate">{participant.email}</p>
                   </div>
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
                 </div>
@@ -71,7 +81,7 @@ const ParticipantsPanel: React.FC = () => {
         </div>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default ParticipantsPanel
+export default ParticipantsPanel;

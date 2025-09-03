@@ -1,21 +1,22 @@
-import React from 'react'
-import { useAtom, useAtomValue } from 'jotai'
-import { currentRoomIdAtom, roomsAtom, roomsAtomFamily } from '../store'
-import { useSocketEvents } from '../features/socket'
-import Button from './Button'
-import RoomCanvas from './RoomCanvas'
-import ParticipantsPanel from './ParticipantsPanel'
+import { useAtom, useAtomValue } from 'jotai';
+import React from 'react';
+
+import { useSocketEvents } from '../hooks/socket';
+import { currentRoomIdAtom, roomsAtomFamily } from '../store';
+import Button from './Button';
+import ParticipantsPanel from './ParticipantsPanel';
+import RoomCanvas from './RoomCanvas';
 
 const RoomView: React.FC = () => {
   const [currentRoomId] = useAtom(currentRoomIdAtom);
   const currentRoom = useAtomValue(roomsAtomFamily(currentRoomId));
-  const { leaveRoom } = useSocketEvents()
+  const { leaveRoom } = useSocketEvents();
 
   const handleLeaveRoom = () => {
     if (currentRoomId) {
-      leaveRoom(currentRoomId)
+      leaveRoom(currentRoomId);
     }
-  }
+  };
 
   if (!currentRoom) return null;
 
@@ -34,16 +35,16 @@ const RoomView: React.FC = () => {
             <div className="flex items-center space-x-2">
               {currentRoom.isPrivate && (
                 <svg className="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  <path
+                    fillRule="evenodd"
+                    d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+                    clipRule="evenodd"
+                  />
                 </svg>
               )}
             </div>
           </div>
-          <Button
-            variant="danger"
-            size="sm"
-            onClick={handleLeaveRoom}
-          >
+          <Button variant="danger" size="sm" onClick={handleLeaveRoom}>
             Leave Room
           </Button>
         </div>
@@ -62,7 +63,7 @@ const RoomView: React.FC = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default RoomView
+export default RoomView;

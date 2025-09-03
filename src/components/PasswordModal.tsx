@@ -1,14 +1,15 @@
-import React, { useState } from 'react'
-import Modal from './Modal'
-import Input from './Input'
-import Button from './Button'
+import React, { useState } from 'react';
+
+import Button from './Button';
+import Input from './Input';
+import Modal from './Modal';
 
 interface PasswordModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onJoin: (password: string) => void
-  roomName: string
-  loading?: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  onJoin: (password: string) => void;
+  roomName: string;
+  loading?: boolean;
 }
 
 const PasswordModal: React.FC<PasswordModalProps> = ({
@@ -16,41 +17,34 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
   onClose,
   onJoin,
   roomName,
-  loading = false
+  loading = false,
 }) => {
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     if (!password.trim()) {
-      setError('Password is required')
-      return
+      setError('Password is required');
+      return;
     }
 
-    onJoin(password.trim())
-  }
+    onJoin(password.trim());
+  };
 
   const handleClose = () => {
-    setPassword('')
-    setError(null)
-    onClose()
-  }
+    setPassword('');
+    setError(null);
+    onClose();
+  };
 
   return (
-    <Modal
-      isOpen={isOpen}
-      onClose={handleClose}
-      title={`Join ${roomName}`}
-      size="sm"
-    >
+    <Modal isOpen={isOpen} onClose={handleClose} title={`Join ${roomName}`} size="sm">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="text-center mb-4">
-          <p className="text-gray-600">
-            This room requires a password to join.
-          </p>
+          <p className="text-gray-600">This room requires a password to join.</p>
         </div>
 
         <Input
@@ -60,7 +54,6 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter room password"
           required
-          autoFocus
         />
 
         {error && (
@@ -79,17 +72,13 @@ const PasswordModal: React.FC<PasswordModalProps> = ({
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            loading={loading}
-            className="flex-1"
-          >
+          <Button type="submit" loading={loading} className="flex-1">
             Join
           </Button>
         </div>
       </form>
     </Modal>
-  )
-}
+  );
+};
 
-export default PasswordModal
+export default PasswordModal;
